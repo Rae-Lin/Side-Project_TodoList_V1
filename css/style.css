@@ -30,7 +30,7 @@ body {
       rgba(255, 255, 255, 0.85),
       rgba(255, 255, 255, 0.85)
     ),
-    url("images/bg.jpg");
+    url("../images/bg.jpg");
   background-size: 50%;
 }
 .card {
@@ -187,7 +187,7 @@ body {
 .todo-lists li {
   box-shadow: 1px 1px 3px 1px rgb(230, 230, 230);
   border-radius: 5px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 .todo-lists .todo-item-title {
   display: flex;
@@ -197,6 +197,7 @@ body {
 .todo-lists .todo-item-title .icon{
   position: relative;
   margin-left: 16px;
+  cursor: pointer;
 }
 .todo-lists .todo-item-title .icon::before{
   content:'';
@@ -215,7 +216,7 @@ body {
 .todo-lists-detail {
   font-size: 0.9rem;
   color: rgb(105, 105, 105);
-  padding: 0 10px 12px 42px;
+  padding: 0 10px 12px 32px;
 }
 .todo-lists-detail p:first-child {
   margin-bottom: 7px;
