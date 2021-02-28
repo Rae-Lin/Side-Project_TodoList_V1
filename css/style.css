@@ -236,7 +236,7 @@ i.fa-pen {
 }
 
 @media screen and (max-width: 800px) {
-  body{
+  body {
     padding-top: 30px;
   }
   .card {
@@ -255,12 +255,15 @@ i.fa-pen {
   .todo-lists .todo-item-title {
     flex-direction: column-reverse;
   }
-  .todo-item-title .input-title {
+  .todo-item .todo-item-title .input-title input {
+    width: 100%;
+  }
+  .todo-lists .todo-item-title .input-title {
     flex: unset;
     width: calc(100% - 45px);
     padding: 3px 10px;
   }
-  .todo-item-title p:last-child{
+  .todo-lists .todo-item-title p:last-child {
     align-self: flex-end;
     margin-bottom: 10px;
   }

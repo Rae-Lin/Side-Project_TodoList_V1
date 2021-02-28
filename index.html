@@ -100,33 +100,30 @@
       },
       methods: {
         addTodo: function () {
-          let newTitle = this.newTodo.title;
-          let newDate = this.newTodo.date;
-          let newLink = this.newTodo.link;
-          let newMemo = this.newTodo.memo;
-          let timestamp = Math.floor(Date.now());
           if (!this.newTodo.title) return;
+
+          // 獲取輸入的值 並放入陣列
           this.todos.push({
-            id: timestamp,
-            title: newTitle,
-            date: newDate,
-            link: newLink,
-            memo: newMemo,
+            id: Math.floor(Date.now()),
+            title: this.newTodo.title,
+            date: this.newTodo.date,
+            link: this.newTodo.link,
+            memo: this.newTodo.memo,
             completed: false,
             pinned: false,
           });
           this.newTodo.title = '';
           this.addTodoIsShow = false;
         },
-        addTodo: function () {
-          if (!this.newTodo.title) return;
-          this.newTodo.id = this.todos.length + 1;
-          this.todos.push({
-            ...this.newTodo,
-          });
-          this.newTodo.title = '';
-          this.addTodoIsShow = false;
-        },
+        // addTodo: function () {
+        //   if (!this.newTodo.title) return;
+        //   this.newTodo.id = this.todos.length + 1;
+        //   this.todos.push({
+        //     ...this.newTodo,
+        //   });
+        //   this.newTodo.title = '';
+        //   this.addTodoIsShow = false;
+        // },
         removeTodo: function (list) {
           let vm = this;
           let newIndex = vm.todos.findIndex(item => list.id === item.id);
