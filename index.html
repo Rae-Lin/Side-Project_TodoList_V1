@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>購物清單</title>
+  <link rel="icon" href="images/favicon.ico">
+  <link rel="stylesheet" href="reset.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css' integrity='sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw==' crossorigin='anonymous' />
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <script src="all.js"></script>
+</head>
+
+<body>
+  <div id="app" class="card">
+    <ul class="card-head">
+      <li :class="{active : visibility == 'all'}" @click="visibility = 'all'">想買的東東</li>
+      <li :class="{active : visibility == 'active'}" @click="visibility = 'active'">還沒買</li>
+      <li :class="{active : visibility == 'completed'}" @click="visibility = 'completed'">買到啦
+        <img src="./images/favicon.ico" alt="">
+      </li>
+    </ul>
+    <div class="card-body">
+
+      <!--- 新增代辦 ---->
+      <div class="todo-add" @click="addTodoIsShow = true" v-show="addTodoIsShow === false">新增想買的清單</div>
+      <div class="todo-item" v-show="addTodoIsShow">
+        <div class="todo-item-title">
+          <p class="input-title"><input type="text" placeholder="標題" v-model="newTodo.title" @keyup.enter="addTodo"></p>
+        </div>
+        <div class="todo-item-detail">
+          <p class="title"><i class="far fa-calendar-alt"></i> 購買日期</p>
+          <p><input type="date" v-model="newTodo.date"></p>
+          <p class="title"><i class="fas fa-external-link-square-alt"></i> 參考連結</p>
+          <p><input type="url" v-model="newTodo.link"></p>
+          <p class="title"><i class="far fa-comment-dots"></i> 備註</p>
+          <p><textarea placeholder="做點筆記吧" v-model="newTodo.memo"></textarea></p>
+        </div>
+        <div class="todo-item-footer">
+          <button class="cancel" @click="cancelTodo">取消</button>
+          <button class="add" @click="addTodo">加入我的待購清單!</button>
+        </div>
+      </div>
+      <!----------------->
+
+      <!-- 任務表 list -->
+      <ul class="todo-lists">
+        <li v-for="(item, key) in sortTodos" :class="{'todo-item-pinned': item.pinned}">
+          <div class="todo-item-title">
+            <span><input type="checkbox" v-model="item.completed" :id="item.id"></span>
+            <!-- <span class="input-title" @dblclick="editTodo(item)"> -->
+            <span class="input-title">
+              <label :for="item.id" :class="{'completed': item.completed}" v-if="item.id !== cacheTodo.id">{{ item.title }}</label>
+              <input type="text" v-else="item.id === cacheTodo.id" v-model="cacheTitle" @keyup.esc="cancelEdit" @keyup.enter="updateTodo(item)">
+            </span>
+            <span>
+              <a :href="item.link" target="_blank" rel="noopener noreferrer">
+                <i class="fas fa-external-link-square-alt" :class="{'-active' : item.link}"></i>
+              </a>
+            </span>
+            <span class="icon" @click="editTodo(item)"><i class="fas fa-pen"></i></span>
+            <span class="icon" @click="pinTodo(item)"><i class="fa-heart" :class="item.pinned ? 'fas' : 'far'"></i></span>
+            <span class="icon" @click="removeTodo(item)"><i class="far fa-trash-alt"></i></span>
+          </div>
+          <div class="todo-lists-detail">
+            <p>購買日期：{{ item.date }}</p>
+            <p>備　　註：{{ item.memo }}</p>
+          </div>
+        </li>
+      </ul>
+      <!----------------->
+      <p class="total">已經買了 : {{ uncompletedTodos }} / {{ todos.length }}</p>
+    </div>
+  </div>
+
+  <script>
+    var app = new Vue({
+      el: '#app',
+      data: {
+        newTodo: {},
+        todos: [
+          {
+            id: '1',
+            title: 'Udemy 六角課程',
+            date: '2020/05/04',
+            link: 'https://www.udemy.com/course/hexschoolcolumn/',
+            memo: 'Bobo 推薦',
+            completed: false,
+            pinned: false,
+          }
+        ],
+        addTodoIsShow: false,
+        cacheTodo: {},
+        cacheTitle: '',
+        visibility: 'all'
+      },
+      methods: {
+        addTodo: function () {
+          let newTitle = this.newTodo.title.trim();
+          let newDate = this.newTodo.date;
+          let newLink = this.newTodo.link;
+          let newMemo = this.newTodo.memo;
+          let timestamp = Math.floor(Date.now());
+          if (!newTitle) { return; }
+          this.todos.push({
+            id: timestamp,
+            title: newTitle,
+            date: newDate,
+            link: newLink,
+            memo: newMemo,
+            completed: false,
+            pinned: false,
+          });
+          console.log(this.todos);
+          this.newTodo.title = '';
+          this.addTodoIsShow = false;
+        },
+        removeTodo: function (list) {
+          let vm = this;
+          let newIndex = vm.todos.findIndex(function (item, key) {
+            return list.id === item.id;
+          })
+          this.todos.splice(newIndex, 1);
+        },
+        pinTodo: function (item) {
+          console.log(item.pinned);
+          item.pinned = !item.pinned;
+        },
+        cancelTodo: function () {
+          this.newTodo.title = '';
+          this.addTodoIsShow = false;
+        },
+        editTodo: function (item) {
+          this.cacheTodo = item;
+          this.cacheTitle = item.title;
+        },
+        updateTodo: function (item) {
+          item.title = this.cacheTitle;
+          this.cacheTitle = '';
+          this.cacheTodo = {};
+        },
+        cancelEdit: function () {
+          this.cacheTodo = {};
+        },
+      },
+      computed: {
+        // Tab分類的清單
+        filteredTodos: function () {
+          if (this.visibility == 'all') {
+            return this.todos;
+          } else if (this.visibility == 'active') {
+            return this.todos.filter(item => !item.completed);
+          } else if (this.visibility == 'completed') {
+            return this.todos.filter(item => item.completed);
+          }
+        },
+        
+        // 加到最愛之清單
+        sortTodos: function(){
+          return this.filteredTodos.sort((itemA, itemB) => {
+            return Number(itemA.pinned) > Number(itemB.pinned) ? -1 : 1
+          })
+        },
+        
+        // 已完成清單數量
+        uncompletedTodos: function () {
+          return this.todos.filter(item => item.completed).length;
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>
