@@ -27,7 +27,7 @@
       <div class="todo-add" @click="addTodoIsShow = true" v-show="addTodoIsShow === false">新增想買的清單</div>
       <div class="todo-item" v-show="addTodoIsShow">
         <div class="todo-item-title">
-          <p class="input-title"><input type="text" placeholder="標題" v-model="newTodo.title" @keyup.enter="addTodo"></p>
+          <p class="input-title"><input type="text" placeholder="標題" v-model.trim="newTodo.title" @keyup.enter="addTodo"></p>
         </div>
         <div class="todo-item-detail">
           <p class="title"><i class="far fa-calendar-alt"></i> 購買日期</p>
@@ -48,20 +48,23 @@
       <ul class="todo-lists">
         <li v-for="(item, key) in sortTodos" :class="{'todo-item-pinned': item.pinned}">
           <div class="todo-item-title">
-            <span><input type="checkbox" v-model="item.completed" :id="item.id"></span>
-            <!-- <span class="input-title" @dblclick="editTodo(item)"> -->
-            <span class="input-title">
-              <label :for="item.id" :class="{'completed': item.completed}" v-if="item.id !== cacheTodo.id">{{ item.title }}</label>
-              <input type="text" v-else="item.id === cacheTodo.id" v-model="cacheTitle" @keyup.esc="cancelEdit" @keyup.enter="updateTodo(item)">
-            </span>
-            <span>
-              <a :href="item.link" target="_blank" rel="noopener noreferrer">
-                <i class="fas fa-external-link-square-alt" :class="{'-active' : item.link}"></i>
-              </a>
-            </span>
-            <span class="icon" @click="editTodo(item)"><i class="fas fa-pen"></i></span>
-            <span class="icon" @click="pinTodo(item)"><i class="fa-heart" :class="item.pinned ? 'fas' : 'far'"></i></span>
-            <span class="icon" @click="removeTodo(item)"><i class="far fa-trash-alt"></i></span>
+            <p class="input-title">
+              <input type="checkbox" v-model="item.completed" :id="item.id">
+              <span>
+                <label :for="item.id" :class="{'completed': item.completed}" v-if="item.id !== cacheTodo.id">{{ item.title }}</label>
+                <input type="text" v-else v-model="cacheTitle" @keyup.esc="cancelEdit" @keyup.enter="updateTodo(item)">
+              </span>
+            </p>
+            <p>
+              <span>
+                <a :href="item.link" target="_blank" rel="noopener noreferrer">
+                  <i class="fas fa-external-link-square-alt" :class="{'-active' : item.link}"></i>
+                </a>
+              </span>
+              <span class="icon" @click="editTodo(item)"><i class="fas fa-pen"></i></span>
+              <span class="icon" @click="pinTodo(item)"><i class="fa-heart" :class="item.pinned ? 'fas' : 'far'"></i></span>
+              <span class="icon" @click="removeTodo(item)"><i class="far fa-trash-alt"></i></span>
+            </p>
           </div>
           <div class="todo-lists-detail">
             <p>購買日期：{{ item.date }}</p>
@@ -70,7 +73,7 @@
         </li>
       </ul>
       <!----------------->
-      <p class="total">已經買了 : {{ uncompletedTodos }} / {{ todos.length }}</p>
+      <p class="total">已經買了 : {{ completedTodos }} / {{ todos.length }}</p>
     </div>
   </div>
 
@@ -81,7 +84,7 @@
         newTodo: {},
         todos: [
           {
-            id: '1',
+            id: '0',
             title: 'Udemy 六角課程',
             date: '2020/05/04',
             link: 'https://www.udemy.com/course/hexschoolcolumn/',
@@ -97,12 +100,12 @@
       },
       methods: {
         addTodo: function () {
-          let newTitle = this.newTodo.title.trim();
+          let newTitle = this.newTodo.title;
           let newDate = this.newTodo.date;
           let newLink = this.newTodo.link;
           let newMemo = this.newTodo.memo;
           let timestamp = Math.floor(Date.now());
-          if (!newTitle) { return; }
+          if (!this.newTodo.title) return;
           this.todos.push({
             id: timestamp,
             title: newTitle,
@@ -112,15 +115,21 @@
             completed: false,
             pinned: false,
           });
-          console.log(this.todos);
+          this.newTodo.title = '';
+          this.addTodoIsShow = false;
+        },
+        addTodo: function () {
+          if (!this.newTodo.title) return;
+          this.newTodo.id = this.todos.length + 1;
+          this.todos.push({
+            ...this.newTodo,
+          });
           this.newTodo.title = '';
           this.addTodoIsShow = false;
         },
         removeTodo: function (list) {
           let vm = this;
-          let newIndex = vm.todos.findIndex(function (item, key) {
-            return list.id === item.id;
-          })
+          let newIndex = vm.todos.findIndex(item => list.id === item.id);
           this.todos.splice(newIndex, 1);
         },
         pinTodo: function (item) {
@@ -155,16 +164,16 @@
             return this.todos.filter(item => item.completed);
           }
         },
-        
+
         // 加到最愛之清單
-        sortTodos: function(){
+        sortTodos: function () {
           return this.filteredTodos.sort((itemA, itemB) => {
             return Number(itemA.pinned) > Number(itemB.pinned) ? -1 : 1
           })
         },
-        
+
         // 已完成清單數量
-        uncompletedTodos: function () {
+        completedTodos: function () {
           return this.todos.filter(item => item.completed).length;
         }
       }

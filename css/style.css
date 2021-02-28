@@ -9,22 +9,14 @@ textarea {
   margin: 0;
   cursor: pointer;
 }
-/* input[type="checkbox"] {
-  appearance: none;
-  background-color: white;
-  width: 15px;
-  height: 15px;
-} */
 input:focus,
 textarea:focus {
   outline: none;
   box-shadow: 0px 0px 3px #4097aa;
 }
 body {
-  /* background-color: #f3deca; */
   display: flex;
   justify-content: center;
-  align-items: top;
   padding-top: 120px;
   background: linear-gradient(
       rgba(255, 255, 255, 0.85),
@@ -42,6 +34,7 @@ body {
 }
 .card-head {
   display: flex;
+  align-items: flex-end;
   background-color: #4097aa;
   color: white;
   font-weight: 600;
@@ -54,7 +47,6 @@ body {
   width: 100%;
   text-align: center;
   padding: 20px 0;
-  /* border-right: 1px solid white; */
   cursor: pointer;
   transition: all 0.3s;
   position: relative;
@@ -86,7 +78,7 @@ body {
   bottom: 0;
   left: 0;
 }
-.card-head img{
+.card-head img {
   width: 1rem;
 }
 .card-body {
@@ -127,9 +119,10 @@ body {
   flex: 1;
   padding: 3px 20px 3px 10px;
 }
-.todo-item-title .input-title input {
-  width: 100%;
+.todo-item-title .input-title input[type="text"] {
+  width: calc(100% - 35px);
   font-size: 1rem;
+  margin-left: 5px;
 }
 .input-title .completed {
   text-decoration: line-through;
@@ -168,7 +161,6 @@ body {
   padding: 10px 0;
   cursor: pointer;
   transition: all 0.3s;
-  /* border: 1px solid rgb(215, 215, 215); */
 }
 .todo-item-footer button.cancel {
   color: #ff7961;
@@ -194,13 +186,13 @@ body {
   align-items: center;
   border-bottom: none;
 }
-.todo-lists .todo-item-title .icon{
+.todo-lists .todo-item-title .icon {
   position: relative;
   margin-left: 16px;
   cursor: pointer;
 }
-.todo-lists .todo-item-title .icon::before{
-  content:'';
+.todo-lists .todo-item-title .icon::before {
+  content: "";
   position: absolute;
   width: 1px;
   height: 100%;
@@ -230,15 +222,46 @@ body {
 i.fa-heart {
   color: #fa5d41;
 }
-i.fa-external-link-square-alt.-active{
+i.fa-external-link-square-alt.-active {
   color: #4097aa;
 }
-i.fa-external-link-square-alt{
-  color:rgb(115, 115, 115);
+i.fa-external-link-square-alt {
+  color: rgb(115, 115, 115);
 }
-i.fa-trash-alt{
-  color:rgb(115, 115, 115);
+i.fa-trash-alt {
+  color: rgb(115, 115, 115);
 }
-i.fa-pen{
-  color:#1968c9;
+i.fa-pen {
+  color: #1968c9;
+}
+
+@media screen and (max-width: 800px) {
+  body{
+    padding-top: 30px;
+  }
+  .card {
+    width: 95%;
+    max-width: unset;
+  }
+  .card-head {
+    padding: 10px 10px 0;
+  }
+  .card-head img {
+    width: 0.85rem;
+  }
+  .card-body {
+    padding: 20px 10px;
+  }
+  .todo-lists .todo-item-title {
+    flex-direction: column-reverse;
+  }
+  .todo-item-title .input-title {
+    flex: unset;
+    width: calc(100% - 45px);
+    padding: 3px 10px;
+  }
+  .todo-item-title p:last-child{
+    align-self: flex-end;
+    margin-bottom: 10px;
+  }
 }
